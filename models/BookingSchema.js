@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 import validator from "email-validator";
+
 const BookingSchema = new mongoose.Schema(
   {
     clientName: { type: String, required: true },
     clientEmail: {
       type: String,
       required: true,
-      unique: true,
+      unique: true, // Ensure the email is unique for each booking
       validate: {
         validator: (email) => validator.validate(email),
         message: "Invalid email format",
@@ -25,7 +26,7 @@ const BookingSchema = new mongoose.Schema(
     specialRequests: { type: String },
     hallId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Hall",
+      ref: "Hall", // Assuming "Hall" is another collection
       required: true,
     },
     status: {

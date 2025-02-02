@@ -5,7 +5,7 @@ import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./Routes/auth.route.js";
-
+// import { generateToken } from "./utils/generateToken.js";
 // Load environment variables
 dotenv.config();
 

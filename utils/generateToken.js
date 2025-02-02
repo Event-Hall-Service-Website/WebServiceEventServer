@@ -15,10 +15,11 @@ export const generateToken = (res, userId) => {
   // Set the cookie in the response
   res.cookie("token", token, {
     httpOnly: true, //cookie cannot be accessed by client side scripts
-    secure: process.env.NODE_ENV === "production", //cookie will only be set on a secure connection
+    secure: process.env.NODE_ENV === "production",
 
     sameSite: "strict", //cookie is sent only to the same site as the request
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
   });
+
   return token; //return the token
 };

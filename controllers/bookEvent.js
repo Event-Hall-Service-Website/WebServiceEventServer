@@ -1,7 +1,8 @@
 import { Booking } from "../models/BookingSchema.js";
-import mongoose from "mongoose";
 import { generateToken } from "../utils/generateToken.js";
 import Validator from "email-validator";
+import mongoose from "mongoose";
+
 export const BookForAnEvent = async (req, res) => {
   const {
     clientName,
@@ -35,9 +36,17 @@ export const BookForAnEvent = async (req, res) => {
         .status(400)
         .json({ success: false, message: "All fields are required" });
     }
-    // Validate email
+
+    // Validate email format
     if (!Validator.validate(clientEmail)) {
       return res.status(400).json({ success: false, message: "Invalid email" });
+    }
+
+    // Validate if hallId is a valid ObjectId (if it's a reference to a Hall collection)
+    if (!mongoose.isValidObjectId(hallId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid hallId format" });
     }
 
     // Check if the user already has a booking for the same date and hall
@@ -53,9 +62,14 @@ export const BookForAnEvent = async (req, res) => {
       });
     }
 
-    // Validate hallId before converting
-    if (!mongoose.isValidObjectId(hallId)) {
-      return res.status(400).json({ error: "Invalid hallId format" });
+    // Ensure start time is before end time
+    if (startTime >= endTime) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Start time must be before end time",
+        });
     }
 
     // Create new booking instance
@@ -69,13 +83,16 @@ export const BookForAnEvent = async (req, res) => {
       eventType,
       numberOfGuests,
       specialRequests,
-      hallId: new mongoose.Types.ObjectId(hallId), // Convert hallId to ObjectId
+      hallId,
       status,
     });
 
     // Save to database
     await newBooking.save();
+
+    // Generate token (if necessary for your system)
     generateToken(res, newBooking._id);
+
     res.status(201).json({
       success: true,
       message: "Booking created successfully",
@@ -83,6 +100,15 @@ export const BookForAnEvent = async (req, res) => {
     });
   } catch (error) {
     console.error("Error booking event:", error);
+
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "This email is already associated with a booking.",
+      });
+    }
+
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
