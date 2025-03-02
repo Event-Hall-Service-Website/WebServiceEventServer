@@ -1,25 +1,16 @@
 import mongoose from "mongoose";
 
-const ContactSchema = new mongoose.Schema(
+const SubscriberSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
     email: {
       type: String,
       required: true,
-    },
-    message: {
-      type: String,
-      required: true,
-    },
-    checkbox: {
-      type: Boolean,
-      required: true,
+      unique: true, // Ensures no duplicate emails
+      trim: true, // Removes extra spaces
+      lowercase: true, // Converts email to lowercase
     },
   },
   { timestamps: true }
 );
 
-export const Contact = mongoose.model("Contact", ContactSchema);
+export const Subscriber = mongoose.model("Subscriber", SubscriberSchema);
