@@ -64,12 +64,10 @@ export const BookForAnEvent = async (req, res) => {
 
     // Ensure start time is before end time
     if (startTime >= endTime) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Start time must be before end time",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Start time must be before end time",
+      });
     }
 
     // Create new booking instance
