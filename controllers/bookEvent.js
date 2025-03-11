@@ -1,36 +1,31 @@
 import { Booking } from "../models/BookingSchema.js";
 import { generateToken } from "../utils/generateToken.js";
 import Validator from "email-validator";
-import mongoose from "mongoose";
 
 export const BookForAnEvent = async (req, res) => {
   const {
-    clientName,
+    clientFirstName,
+    clientLastName,
     clientEmail,
     clientPhone,
-    eventDate,
-    startTime,
-    endTime,
     eventType,
-    numberOfGuests,
-    specialRequests,
-    hallId,
-    status,
+    eventDate,
+    duration,
   } = req.body;
 
+  // Log the request body for debugging
+  console.log(req.body);
+
   try {
-    // Validate required fields (specialRequests can be optional)
+    // Validate required fields
     if (
+      !clientFirstName ||
+      !clientLastName ||
       !clientEmail ||
-      !clientName ||
       !clientPhone ||
-      !eventDate ||
-      !startTime ||
-      !endTime ||
       !eventType ||
-      !numberOfGuests ||
-      !hallId ||
-      !status
+      !eventDate ||
+      !duration
     ) {
       return res
         .status(400)
@@ -42,53 +37,32 @@ export const BookForAnEvent = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid email" });
     }
 
-    // Validate if hallId is a valid ObjectId (if it's a reference to a Hall collection)
-    if (!mongoose.isValidObjectId(hallId)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid hallId format" });
-    }
-
-    // Check if the user already has a booking for the same date and hall
+    // Check if booking already exists for the same date and Email
     const existingBooking = await Booking.findOne({
       clientEmail,
       eventDate,
-      hallId,
     });
     if (existingBooking) {
       return res.status(400).json({
         success: false,
-        message: "Booking already exists for this date and hall",
-      });
-    }
-
-    // Ensure start time is before end time
-    if (startTime >= endTime) {
-      return res.status(400).json({
-        success: false,
-        message: "Start time must be before end time",
+        message: "Booking already exists for this date and clientEmail",
       });
     }
 
     // Create new booking instance
     const newBooking = new Booking({
-      clientName,
+      clientName: `${clientFirstName} ${clientLastName}`, // Combine first & last name
       clientEmail,
       clientPhone,
-      eventDate,
-      startTime,
-      endTime,
       eventType,
-      numberOfGuests,
-      specialRequests,
-      hallId,
-      status,
+      eventDate,
+      duration,
     });
 
     // Save to database
     await newBooking.save();
 
-    // Generate token (if necessary for your system)
+    // Generate token (if necessary)
     generateToken(res, newBooking._id);
 
     res.status(201).json({
