@@ -10,7 +10,6 @@ export const BookForAnEvent = async (req, res) => {
     clientPhone,
     eventType,
     eventDate,
-    duration,
   } = req.body;
 
   // Log the request body for debugging
@@ -24,8 +23,7 @@ export const BookForAnEvent = async (req, res) => {
       !clientEmail ||
       !clientPhone ||
       !eventType ||
-      !eventDate ||
-      !duration
+      !eventDate
     ) {
       return res
         .status(400)
@@ -39,13 +37,12 @@ export const BookForAnEvent = async (req, res) => {
 
     // Check if booking already exists for the same date and Email
     const existingBooking = await Booking.findOne({
-      clientEmail,
       eventDate,
     });
     if (existingBooking) {
       return res.status(400).json({
         success: false,
-        message: "Booking already exists for this date and clientEmail",
+        message: "Booking already exists for this date ",
       });
     }
 
@@ -56,7 +53,6 @@ export const BookForAnEvent = async (req, res) => {
       clientPhone,
       eventType,
       eventDate,
-      duration,
     });
 
     // Save to database

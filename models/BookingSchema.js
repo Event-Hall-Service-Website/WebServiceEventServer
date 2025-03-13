@@ -15,7 +15,7 @@ const BookingSchema = new mongoose.Schema(
     },
     clientPhone: { type: String, required: true },
     eventDate: { type: Date, required: true },
-    duration: { type: String, required: true }, // Matches frontend duration
+
     eventType: {
       type: String,
       required: true,
