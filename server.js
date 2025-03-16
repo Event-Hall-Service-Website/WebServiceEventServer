@@ -23,8 +23,13 @@ app.use(cookieParser()); // allows us to parse incoming cookies from the client
 // Routes
 app.use("/api/auth", authRoutes);
 
+// app.all("*", (req, res) => {
+//   res.send("Welcome to Event Hall Services.");
+// });
+
+// Default Route
 app.all("*", (req, res) => {
-  res.send("Welcome to Event Hall Services.");
+  res.status(404).send("Route not found.");
 });
 
 // Error Handling Middleware
