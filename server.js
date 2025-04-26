@@ -21,7 +21,7 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(cookieParser()); // allows us to parse incoming cookies from the client
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api", authRoutes);
 
 // app.all("*", (req, res) => {
 //   res.send("Welcome to Event Hall Services.");

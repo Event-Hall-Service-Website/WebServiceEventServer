@@ -21,6 +21,10 @@ const BookingSchema = new mongoose.Schema(
       required: true,
       enum: ["wedding", "conference", "birthday", "corporate"],
     },
+    eventMessage: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

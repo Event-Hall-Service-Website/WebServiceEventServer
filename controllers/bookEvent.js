@@ -10,6 +10,7 @@ export const BookForAnEvent = async (req, res) => {
     clientPhone,
     eventType,
     eventDate,
+    eventMessage,
   } = req.body;
 
   // Log the request body for debugging
@@ -23,7 +24,8 @@ export const BookForAnEvent = async (req, res) => {
       !clientEmail ||
       !clientPhone ||
       !eventType ||
-      !eventDate
+      !eventDate ||
+      !eventMessage
     ) {
       return res
         .status(400)
@@ -53,6 +55,7 @@ export const BookForAnEvent = async (req, res) => {
       clientPhone,
       eventType,
       eventDate,
+      eventMessage,
     });
 
     // Save to database
